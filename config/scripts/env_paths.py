@@ -1,7 +1,7 @@
 import site
 from pathlib import Path
 
-root = Path.cwd().parent
+root = Path.cwd()
 
 src_path = root / 'src'
 config_path = root / 'config'
