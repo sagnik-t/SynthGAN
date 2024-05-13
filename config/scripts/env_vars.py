@@ -1,17 +1,14 @@
-import os
-import pandas as pd
-from pathlib import Path
+from dotenv import set_key
 from typing import Literal
 
-from config import Config
 from utils.data_loader import DataLoader
 
-def fetch_metadata(data: Literal['train'] | Literal['val']) -> tuple[int]:
+def fetch_metadata(data: Literal['train', 'val']) -> tuple[int]:
     """
     Fetches metadata from the train or val data file.
     
     Args:
-    data: str, type of dataset
+    data: Literal['train', 'val'], type of dataset
     
     Returns:
     tuple, metadata from the data file.
@@ -36,14 +33,14 @@ def set_env_vars():
     """
     Sets the environment variables for train and val data.
     """
-    
     train_vars = fetch_metadata('train')
     val_vars = fetch_metadata('val')
     
-    os.environ['TRAIN_NUM_USERS'] = str(train_vars[0])
-    os.environ['TRAIN_NUM_ITEMS'] = str(train_vars[1])
-    os.environ['VAL_NUM_USERS'] = str(val_vars[0])
-    os.environ['VAL_NUM_ITEMS'] = str(val_vars[1])
+    # Update or create .env file with environment variables
+    set_key('.env', 'TRAIN_NUM_USERS', str(train_vars[0]))
+    set_key('.env', 'TRAIN_NUM_ITEMS', str(train_vars[1]))
+    set_key('.env', 'VAL_NUM_USERS', str(val_vars[0]))
+    set_key('.env', 'VAL_NUM_ITEMS', str(val_vars[1]))
     
     return
 

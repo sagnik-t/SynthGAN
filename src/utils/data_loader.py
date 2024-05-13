@@ -3,7 +3,19 @@ import pandas as pd
 from config import Config
 
 class DataLoader:
-    
+    """
+    A class for loading raw, train, and validation data.
+
+    Attributes:
+        config (Config): An instance of the Config class containing the paths to the data files.
+
+    Methods:
+        __init__(self, config=Config): Initializes the DataLoader with a Config instance.
+        load_raw_data(self): Loads raw data from a specified file and returns a pandas DataFrame.
+        load_train_data(self): Loads training data from a specified file and returns a pandas DataFrame.
+        load_val_data(self): Loads validation data from a specified file and returns a pandas DataFrame.
+    """
+
     def __init__(self, config=Config):
         self.config = config
     
