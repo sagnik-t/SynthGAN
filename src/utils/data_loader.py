@@ -16,17 +16,17 @@ class DataLoader:
         load_val_data(self): Loads validation data from a specified file and returns a pandas DataFrame.
     """
 
-    def __init__(self, config=Config):
+    def __init__(self, config=Config()):
         self.config = config
     
     def load_raw_data(self):
-        df = pd.read_csv(self.config.RAW_DATA_FILE, delimiter='\t', usecols=[0, 1, 2], names=['user_id', 'item_id', 'rating'])
+        df = pd.read_csv(self.config.paths.RAW_DATA_FILE, delimiter='\t', usecols=[0, 1, 2], names=['user_id', 'item_id', 'rating'])
         return df
     
     def load_train_data(self):
-        df = pd.read_csv(self.config.TRAIN_DATA_FILE, delimiter='\t')
+        df = pd.read_csv(self.config.paths.TRAIN_DATA_FILE, delimiter='\t')
         return df
     
     def load_val_data(self):
-        df = pd.read_csv(self.config.VAL_DATA_FILE, delimiter='\t')
+        df = pd.read_csv(self.config.paths.VAL_DATA_FILE, delimiter='\t')
         return df
