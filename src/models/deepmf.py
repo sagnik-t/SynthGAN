@@ -2,8 +2,12 @@ import tensorflow as tf
 import keras
 from keras import Model
 from keras.layers import Input, Embedding, Flatten, Dot
+from keras.optimizers import Adam
+from keras.losses import MeanSquaredError
+from keras.metrics import MeanSquaredError
 
 from config import Config
+from utils.data_loader import DataLoader
 
 class DeepMF(Model):
     
@@ -32,8 +36,31 @@ class DeepMF(Model):
     
     def summary(self):
         x = Input(shape=(2,))
-        return Model(inputs=x, outputs=self.call(x))
+        return Model(inputs=x, outputs=self.call(x)).summary()
     
     def build_graph(self):
         x = Input(shape=(2,))
         return Model(inputs=x, outputs=self.call(x))
+
+if __name__ == '__main__':
+    
+    deepmf = DeepMF()
+    
+    deepmf.compile(
+        optimizer=Adam(),
+        loss=MeanSquaredError(),
+        metrics=[keras.metrics.MeanSquaredError()]
+    )
+    
+    x_train, x_test, y_train, y_test = DataLoader().load_numpy()
+    
+    deepmf.fit(
+    [x_train[:, 0], x_train[:, 1]],
+    y_train,
+    validation_data=([x_test[:, 0], x_test[:, 1]], y_test),
+    epochs=10,
+    batch_size=32,
+    validation_freq=3
+    )
+    
+    deepmf.summary()
