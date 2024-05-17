@@ -42,15 +42,11 @@ class Config:
         A dataclass for managing operational parameters, typically sourced from environment variables.
         
         Attributes:
-            TRAIN_NUM_USERS (int): The number of users in the training set, sourced from an environment variable.
-            TRAIN_NUM_ITEMS (int): The number of items in the training set, sourced from an environment variable.
-            VAL_NUM_USERS (int): The number of users in the validation set, sourced from an environment variable.
-            VAL_NUM_ITEMS (int): The number of items in the validation set, sourced from an environment variable.
+            NUM_USERS (int): The number of users in the dataset.
+            NUM_ITEMS (int): The number of items in the dataset.
         """
-        TRAIN_NUM_USERS: int = int(os.getenv('TRAIN_NUM_USERS'))
-        TRAIN_NUM_ITEMS: int = int(os.getenv('TRAIN_NUM_ITEMS'))
-        VAL_NUM_USERS: int = int(os.getenv('VAL_NUM_USERS'))
-        VAL_NUM_ITEMS: int = int(os.getenv('VAL_NUM_ITEMS'))
+        NUM_USERS: int = int(os.getenv('NUM_USERS'))
+        NUM_ITEMS: int = int(os.getenv('NUM_ITEMS'))
     
     
     def __init__(self):
