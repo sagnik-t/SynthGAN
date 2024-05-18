@@ -1,10 +1,7 @@
 import tensorflow as tf
 import keras
 from keras import Model
-from keras.layers import Input, Embedding, Flatten, Dot
-from keras.optimizers import Adam
-from keras.losses import MeanSquaredError
-from keras.metrics import MeanSquaredError
+from keras import Model, layers, optimizers, losses, metrics
 
 from config import Config
 from utils.data_loader import DataLoader
@@ -17,11 +14,11 @@ class DeepMF(Model):
         self.num_users = Config.Vars.NUM_USERS
         self.num_items = Config.Vars.NUM_ITEMS
         
-        self.user_embedding = Embedding(self.num_users + 1, self.latent_dim, name='user_embedding')
-        self.user_flatten = Flatten(name='user_flatten')
-        self.item_embedding = Embedding(self.num_items + 1, self.latent_dim, name='item_embedding')
-        self.item_flatten = Flatten(name='item_flatten')
-        self.dot = Dot(axes=1, name='dot')
+        self.user_embedding = layers.Embedding(self.num_users + 1, self.latent_dim, name='user_embedding')
+        self.user_flatten = layers.Flatten(name='user_flatten')
+        self.item_embedding = layers.Embedding(self.num_items + 1, self.latent_dim, name='item_embedding')
+        self.item_flatten = layers.Flatten(name='item_flatten')
+        self.dot = layers.Dot(axes=1, name='dot')
     
     def call(self, inputs):
         user_input, item_input = inputs[0], inputs[1]
@@ -35,11 +32,11 @@ class DeepMF(Model):
         return rating_vec
     
     def summary(self):
-        x = Input(shape=(2,))
+        x = layers.Input(shape=(2,))
         return Model(inputs=x, outputs=self.call(x)).summary()
     
     def build_graph(self):
-        x = Input(shape=(2,))
+        x = layers.Input(shape=(2,))
         return Model(inputs=x, outputs=self.call(x))
 
 if __name__ == '__main__':
@@ -47,8 +44,8 @@ if __name__ == '__main__':
     deepmf = DeepMF()
     
     deepmf.compile(
-        optimizer=Adam(),
-        loss=MeanSquaredError(),
+        optimizer=optimizers.Adam(),
+        loss=losses.MeanSquaredError(),
         metrics=[keras.metrics.MeanSquaredError()]
     )
     
