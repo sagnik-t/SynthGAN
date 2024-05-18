@@ -71,16 +71,7 @@ class GAN(Model):
         return self.generator(x)
     
     def summary(self):
-        if isinstance(self.discrimator, keras.src.models.Functional):
-            input_shape = self.discrimator.layers[1].input.shape[1:]
-        else:
-            input_shape = self.discrimator.layers[0].input.shape[1:]
-        
-        input_tensor = layers.Input(shape=input_shape)
-        noise_vec = layers.Input(shape=(self.latent_dim,))
-        
-        model = Model(inputs=[noise_vec, input_tensor], outputs=self.call([noise_vec, input_tensor]))
-                
+        model = self.build_graph()
         return model.summary()
     
     def build_graph(self):
