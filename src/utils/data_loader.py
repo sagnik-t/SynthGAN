@@ -35,5 +35,5 @@ class DataLoader:
     def load_numpy(self)-> tuple[np.ndarray]:
         train_df = self.load_train_data()
         val_df = self.load_val_data()
-        x_train, x_test, y_train, y_test = train_df[['user_id', 'item_id']].values, val_df[['user_id', 'item_id']].values, train_df['rating'].values, val_df['rating'].values
+        x_train, x_test, y_train, y_test = train_df.values, val_df.values, train_df['rating'].values, val_df['rating'].values
         return x_train, x_test, y_train, y_test
