@@ -1,4 +1,4 @@
-# GenGAN
+# SynthGAN
 SynthGAN is a GAN based model whose objective is to create synthetic collaborative datasets.
 
 At present it consists of three components:
