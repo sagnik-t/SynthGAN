@@ -17,7 +17,7 @@ class GAN(Model):
         self.generator = generator
         self.discriminator = discriminator
     
-    def call(self, inputs, training=False):
+    def call(self, inputs, training=False) -> tuple[tf.Tensor]:
         noise_vec, input_tensor = inputs
         
         gen_tensor = self.generator(noise_vec, training=True)
@@ -53,7 +53,7 @@ class GAN(Model):
         noise_vec = tf.random.normal((tf.shape(inputs)[0], self.noise_dim))
         
         with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
-            _, real_output, gen_output = self.call(inputs=(noise_vec, inputs), training=True)
+            gen_tensor, real_output, gen_output = self.call(inputs=(noise_vec, inputs), training=True)
             loss = self.compute_loss(y_pred=[inputs, real_output, gen_output])
         
         gen_grads = gen_tape.gradient(loss['gen_loss'], self.generator.trainable_weights)
@@ -64,7 +64,8 @@ class GAN(Model):
         
         return {
             'gen_loss': loss['gen_loss'],
-            'disc_loss': loss['disc_loss']
+            'disc_loss': loss['disc_loss'],
+            **self.compute_metrics(x=noise_vec, y=inputs, y_pred=gen_tensor)
         }
     
     def predict(self, x):
@@ -84,3 +85,18 @@ class GAN(Model):
         noise_vec = layers.Input(shape=(self.noise_dim,))
         
         return Model(inputs=[noise_vec, input_tensor], outputs=self.call((noise_vec, input_tensor)))
+    
+    def get_config(self):
+        config = super().get_config()
+        config.update({
+            'noise_dim': self.noise_dim,
+            'generator': self.generator.get_config(),
+            'discriminator': self.discriminator.get_config()
+        })
+        return config
+    
+    @classmethod
+    def from_config(cls, config: dict):
+        generator = Model.from_config(config.pop('generator'))
+        discriminator = Model.from_config(config.pop('discriminator'))
+        return cls(generator=generator, discriminator=discriminator, **config)

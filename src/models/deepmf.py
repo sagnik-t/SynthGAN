@@ -1,13 +1,12 @@
 import tensorflow as tf
 import keras
-from keras import Model
 from keras import Model, layers, optimizers, losses, metrics
 
 from config import Config
 from utils.data_loader import DataLoader
-from models.layers.split import Split
-from models.layers.normalization import MinMaxNormalization
+from layers import Split, MinMaxNormalization
 
+@keras.utils.register_keras_serializable(package='Custom', name='DeepMF')
 class DeepMF(Model):
     
     def __init__(
@@ -21,7 +20,7 @@ class DeepMF(Model):
         self.latent_dim = latent_dim
         self.num_users = num_users
         self.num_items = num_items
-        self.split = Split(name='split')
+        self.split = Split(name='split', num_splits=3)
         self.rating = layers.Identity(name='rating')
         self.user_embedding = layers.Embedding(self.num_users + 1, self.latent_dim, name='user_embedding')
         self.user_flatten = layers.Flatten(name='user_flatten')
@@ -65,6 +64,15 @@ class DeepMF(Model):
             'mse_loss': loss,
             **self.compute_metrics(x=inputs[0], y=output, y_pred=rating_vec)
         }
+    
+    def get_config(self):
+        config = super().get_config()
+        config.update({
+            'latent_dim': self.latent_dim,
+            'num_users': self.num_users,
+            'num_items': self.num_items,
+        })
+        return config
     
     def summary(self):
         model = self.build_graph()

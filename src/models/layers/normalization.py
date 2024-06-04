@@ -1,6 +1,8 @@
 import tensorflow as tf
+import keras
 from keras import Layer, layers
 
+@keras.utils.register_keras_serializable(package='Custom', name='MinMaxNormalization')
 class MinMaxNormalization(Layer):
     
     def __init__(self, min_val, max_val, **kwargs):
@@ -12,3 +14,11 @@ class MinMaxNormalization(Layer):
         
     def call(self, inputs):
         return self.lambda_layer(inputs)
+    
+    def get_config(self):
+        config = super().get_config()
+        config.update({
+            'min_val': self.min_val,
+            'max_val': self.max_val,
+        })
+        return config
