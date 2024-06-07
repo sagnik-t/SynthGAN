@@ -33,6 +33,8 @@ class Config:
         RAW_DATA_FILE: Path = RAW_DATA_PATH / 'movielens100k.data'
         TRAIN_DATA_FILE: Path = PROCESSED_DATA_PATH / 'train-set.csv'
         VAL_DATA_FILE: Path = PROCESSED_DATA_PATH / 'val-set.csv'
+        
+        REGISTRY_PATH: Path = ROOT_PATH / 'registry'
     
     
     @dataclass(frozen=True)

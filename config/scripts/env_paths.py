@@ -20,5 +20,4 @@ Path.touch(pth_file)
 with open(pth_file, 'w') as file:
     for path in env_paths:
         file.write(path.as_posix() + '\n')
-        
-print(site_pckgs_dir)
+        print(f'Added {path} to {pth_file}')
