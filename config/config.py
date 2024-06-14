@@ -28,11 +28,12 @@ class Config:
             PIPELINE_PATH (Path): The directory path for the data processing pipeline.
         """
         ROOT_PATH: Path = Path(__file__).parent.parent
+        DATA_DIR = ROOT_PATH / 'data'
         RAW_DATA_PATH: Path = ROOT_PATH / 'data' / 'raw'
-        PROCESSED_DATA_PATH: Path = ROOT_PATH / 'data' / 'processed'
-        RAW_DATA_FILE: Path = RAW_DATA_PATH / 'movielens100k.data'
-        TRAIN_DATA_FILE: Path = PROCESSED_DATA_PATH / 'train-set.csv'
-        VAL_DATA_FILE: Path = PROCESSED_DATA_PATH / 'val-set.csv'
+        
+        csv = {
+            path.stem: path for path in DATA_DIR.iterdir() if path.as_posix().endswith('.csv')
+        }
         
         REGISTRY_PATH: Path = ROOT_PATH / 'registry'
     
