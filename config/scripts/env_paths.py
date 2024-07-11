@@ -4,12 +4,13 @@ from pathlib import Path
 root = Path.cwd()
 
 src_path = root / 'src'
-models_path = root / 'src' / 'models'
-layers_path = root / 'src' / 'models' / 'layers'
-utils_path = root / 'src' / 'utils'
+models_path = src_path / 'models'
+layers_path = models_path / 'layers'
+pipe_path = src_path / 'pipe'
+utils_path = src_path / 'utils'
 config_path = root / 'config'
 
-env_paths = [src_path, models_path, layers_path, utils_path, config_path]
+env_paths = [src_path, models_path, layers_path, pipe_path, utils_path, config_path]
 
 site_pckgs_dir = Path(site.getsitepackages()[0])
 

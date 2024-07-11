@@ -1,3 +1,4 @@
+from typing import Literal
 from dataclasses import dataclass, fields
 import os
 from pathlib import Path
@@ -29,13 +30,15 @@ class Config:
         """
         ROOT_PATH: Path = Path(__file__).parent.parent
         DATA_DIR = ROOT_PATH / 'data'
-        RAW_DATA_PATH: Path = ROOT_PATH / 'data' / 'raw'
-        
-        csv = {
-            path.stem: path for path in DATA_DIR.iterdir() if path.as_posix().endswith('.csv')
-        }
-        
         REGISTRY_PATH: Path = ROOT_PATH / 'registry'
+        IMAGE_PATH: Path = ROOT_PATH / 'images'
+        
+        @staticmethod
+        def get_path(
+            tag: Literal['movie', 'food', 'jester'],
+            set_type: Literal['raw', 'train', 'val', 'full']
+        ):
+            return (Config.Paths.DATA_DIR / tag / set_type).with_suffix('.csv')
     
     
     @dataclass(frozen=True)
