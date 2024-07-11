@@ -1,6 +1,8 @@
+from typing import Dict
+
 import tensorflow as tf
 import keras
-from keras import Model, layers, losses
+from keras import Model, layers, losses, optimizers
 
 @keras.utils.register_keras_serializable(package='Custom', name='GAN')
 class GAN(Model):
@@ -29,13 +31,30 @@ class GAN(Model):
     
     def compile(
         self,
-        gen_optimizer: keras.Optimizer,
-        disc_optimizer: keras.Optimizer,
+        gen_optimizer: optimizers.Optimizer,
+        disc_optimizer: optimizers.Optimizer,
         **kwargs
     ):
         super(GAN, self).compile(**kwargs)
         self.gen_optimizer = gen_optimizer
         self.disc_optimizer = disc_optimizer
+    
+    def get_compile_config(self):
+        config = super().get_compile_config()
+        config.update({
+            'gen_optimizer': self.gen_optimizer.get_config(),
+            'disc_optimizer': self.disc_optimizer.get_config()
+        })
+        return config
+    
+    def compile_from_config(self, config: Dict):
+        gen_optimizer = keras.utils.deserialize_keras_object(config.pop('gen_optimizer'))
+        disc_optimizer = keras.utils.deserialize_keras_object(config.pop('disc_optimizer'))
+        self.compile(
+            gen_optimizer=gen_optimizer,
+            disc_optimizer=disc_optimizer,
+            **config
+        )
     
     def compute_loss(self, x=None, y=None, y_pred=None, sample_weight=None):
         _, real_output, gen_output = y_pred
@@ -53,7 +72,7 @@ class GAN(Model):
         noise_vec = tf.random.normal((tf.shape(inputs)[0], self.noise_dim))
         
         with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
-            gen_tensor, real_output, gen_output = self.call(inputs=(noise_vec, inputs), training=True)
+            gen_tensor, real_output, gen_output = self(inputs=(noise_vec, inputs), training=True)
             loss = self.compute_loss(y_pred=[inputs, real_output, gen_output])
         
         gen_grads = gen_tape.gradient(loss['gen_loss'], self.generator.trainable_weights)
@@ -65,7 +84,7 @@ class GAN(Model):
         return {
             'gen_loss': loss['gen_loss'],
             'disc_loss': loss['disc_loss'],
-            **self.compute_metrics(x=noise_vec, y=inputs, y_pred=gen_tensor)
+            **self.compute_metrics(x=noise_vec, y=inputs, y_pred=gen_tensor, sample_weight=None)
         }
     
     def predict(self, x):
@@ -96,7 +115,7 @@ class GAN(Model):
         return config
     
     @classmethod
-    def from_config(cls, config: dict):
+    def from_config(cls, config: Dict):
         generator = Model.from_config(config.pop('generator'))
         discriminator = Model.from_config(config.pop('discriminator'))
         return cls(generator=generator, discriminator=discriminator, **config)

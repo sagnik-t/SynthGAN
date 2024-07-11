@@ -62,7 +62,7 @@ class DeepMF(Model):
         
         return {
             'mse_loss': loss,
-            **self.compute_metrics(x=inputs[0], y=output, y_pred=rating_vec)
+            **self.compute_metrics(x=inputs[0], y=output, y_pred=rating_vec, sample_weight=None)
         }
     
     def get_config(self):
@@ -84,7 +84,7 @@ class DeepMF(Model):
 
 if __name__ == '__main__':
     
-    x_train, x_test, y_train, y_test = DataLoader().load_numpy()
+    x_train, y_train, x_test, y_test = DataLoader().load_numpy()
     
     deepmf = DeepMF()
     deepmf.compile(
@@ -92,19 +92,20 @@ if __name__ == '__main__':
         loss=losses.MeanSquaredError(),
         metrics=[metrics.R2Score()]
     )
-    
     deepmf.fit(
-        [x_train[:, 0], x_train[:, 1], x_train[:, 2]],
+        x_train,
         y_train,
-        validation_data=([x_test[:, 0], x_test[:, 1], x_test[:, 2]], y_test),
-        epochs=10,
+        validation_data=(x_test, y_test),
+        epochs=1,
         batch_size=32,
         validation_freq=3
     )
-    deepmf.summary()
+    
+    deepmf.save(filepath=Config.Paths.REGISTRY_PATH / 'deepmf.keras')
+    
     keras.utils.plot_model(
         deepmf.build_graph(),
         show_shapes=True,
         dpi=70,
-        to_file='src/models/images/deepmf.png'
+        to_file=Config.Paths.IMAGE_PATH / 'deepmf.png'
     )
