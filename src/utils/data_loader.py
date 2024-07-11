@@ -13,15 +13,24 @@ class DataLoader:
 
     Methods:
         load_raw_data(self): Loads raw data from a specified file and returns a pandas DataFrame.
-        load_train_data(self): Loads training data from a specified file and returns a pandas DataFrame.
-        load_val_data(self): Loads validation data from a specified file and returns a pandas DataFrame.
         load_numpy(self): Loads training and validation data as numpy arrays and returns a tuple of four arrays.
     """
     
     @staticmethod
     def load_raw_data()-> pd.DataFrame:
-        return pd.read_csv(Config.Paths.RAW_DATA_PATH, delimiter='\t')
+        # return pd.read_csv(Config.Paths.RAW_DATA_PATH, delimiter='\t')
+        pass
     
     @staticmethod
-    def load_data(set_type: Literal['full', 'train', 'val'])-> pd.DataFrame:
-        return pd.read_csv(Config.Paths.DATA_PATH[f'{set_type}-set'])
+    def load_data(
+        tag: Literal['movie', 'food', 'jester'],
+        set_type: Literal['full', 'train', 'val']
+    )-> pd.DataFrame:
+        return pd.read_csv(Config.Paths.get_path(tag, set_type), delimiter='\t')
+
+    @staticmethod
+    def load_numpy(tag: Literal['movie', 'food', 'jester']) -> tuple[np.ndarray]:
+        train_df = DataLoader.load_data(tag=tag, set_type='train')
+        val_df = DataLoader.load_data(tag=tag, set_type='val')
+        x_train, x_test, y_train, y_test = train_df.values, val_df.values, train_df['rating'].values.astype(np.float32), val_df['rating'].values.astype(np.float32)
+        return x_train, y_train, x_test, y_test
