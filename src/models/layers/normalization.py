@@ -1,9 +1,9 @@
 import tensorflow as tf
 import keras
-from keras import Layer, layers
+from keras import layers
 
 @keras.utils.register_keras_serializable(package='Custom', name='MinMaxNormalization')
-class MinMaxNormalization(Layer):
+class MinMaxNormalization(layers.Layer):
     
     def __init__(self, min_val, max_val, **kwargs):
         super().__init__(**kwargs)

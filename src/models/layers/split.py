@@ -1,9 +1,9 @@
 import tensorflow as tf
 import keras
-from keras import Layer, layers
+from keras import layers
 
 @keras.utils.register_keras_serializable(package='Custom', name='Split')
-class Split(Layer):
+class Split(layers.Layer):
     
     def __init__(self, num_splits, **kwargs):
         super(Split, self).__init__(**kwargs)
